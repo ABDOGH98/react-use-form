@@ -25,7 +25,7 @@ function App() {
 		handleSubmit,
 		watch,
 		reset,
-		formState: { errors, isDirty, isValid },
+		formState: { errors, isDirty, isValid, touchedFields, dirtyFields },
 	} = useForm({
 		defaultValues: {
 			firstname: "",
@@ -40,7 +40,7 @@ function App() {
 
 	return (
 		<div>
-			hello
+			hello useForm Hooks
 			<form action="" onSubmit={handleSubmit(onSubmit)}>
 				<label htmlFor="">First Name :</label>
 				<input
@@ -50,9 +50,13 @@ function App() {
 						required: "This champ is required",
 						minLength: { value: 5, message: "min length is 5" },
 						onBlur: () => console.log("I am out"),
+						pattern: {
+							value: /^[a-zA-Z]+$/,
+							message: "Only character accepted",
+						},
 					})}
 				/>
-				<p>{errors && <span>this is required input</span>} </p>
+				<p>{errors.firstname && <span>{errors.firstname.message}</span>} </p>
 				<br />
 				<label htmlFor="">Last Name :</label>
 				<input type="text" placeholder="last name" {...register("lastname")} />
@@ -60,12 +64,13 @@ function App() {
 				<label htmlFor="">Male :</label>
 				<input type="checkbox" {...register("male")} />
 				<br />
-				<input type="submit" value="Done!" disabled={!isValid} />
+				<input type="submit" value="Done!" disabled={!dirtyFields.lastname} />
 				<button
 					disabled={!isDirty}
 					onClick={() =>
 						reset({
 							firstname: "I can overrid default value for one attr",
+							lastname: "",
 						})
 					}
 				>
